@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GeoJSON Rewind</title>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+<script>
+d3.json("data/Leipzig_ortsteile.geojson").then(function(data) {
+    var fixed = data.features.map(function(feature) {
+        return turf.rewind(feature, {reverse: true});
+    });
+
+    data.features = fixed;
+    
+    var jsonString = JSON.stringify(data);
+
+    // Display the result in the browser
+    d3.select("body").append("pre").text(jsonString);
+
+    // Create a download link
+    var a = document.createElement("a");
+    var file = new Blob([jsonString], {type: 'application/json'});
+    a.href = URL.createObjectURL(file);
+    a.download = 'Leipzig_ortsteile_rewind.json';
+    document.body.appendChild(a);
+    a.click();
+});
+</script>
+
+</body>
+</html>

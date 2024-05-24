@@ -27,7 +27,7 @@
             .attr('height', height);
 
         Promise.all([
-            d3.json('data/Leipzig_ortsteile_rewind.json'),
+            d3.json('data/Leipzig_ortsteile_rewind_turf.json'),
             d3.json('data/crime_rates.json')
         ]).then(([ortsteile, crimeRates]) => {
             console.log("GeoJSON data:", ortsteile);

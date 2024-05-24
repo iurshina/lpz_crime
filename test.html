@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lpgz crime rates</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        #map {
+            width: 800px;
+            height: 600px;
+            border: 1px solid black;
+        }
+        .map path {
+            stroke: #999;
+            stroke-width: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <svg id="map" viewBox="0 0 800 600"></svg>
+    <script>
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select('#map')
+            .attr('width', width)
+            .attr('height', height);
+
+        Promise.all([
+            d3.json('data/Leipzig_ortsteile_rewind.json'),
+            d3.json('data/crime_rates.json')
+        ]).then(([ortsteile, crimeRates]) => {
+            console.log("GeoJSON data:", ortsteile);
+            console.log("Crime rates data:", crimeRates);
+
+            const projection = d3.geoMercator()
+                .fitSize([width, height], ortsteile);
+
+            const pathGenerator = d3.geoPath().projection(projection);
+
+            const colorScale = d3.scaleSequential(d3.interpolateReds)
+                .domain([0, d3.max(Object.values(crimeRates))]);
+
+            svg.selectAll('path')
+                .data(ortsteile.features)
+                .enter()
+                .append('path')
+                .attr('d', d => {
+                    const pathData = pathGenerator(d);
+                    console.log(`Path data for ${d.properties.Name}:`, pathData);
+                    return pathData;
+                })
+                .attr('fill', d => {
+                    const rate = crimeRates[d.properties.Name];
+                    console.log(`Area: ${d.properties.Name}, Crime rate: ${rate}`);
+                    return rate ? colorScale(rate) : '#ccc';
+                })
+                .attr('stroke', '#999')
+                .attr('stroke-width', '0.5');
+
+            console.log("SVG Paths:", svg.selectAll('path'));
+
+        }).catch(err => console.error("Error loading data:", err));
+    </script>
+</body>
+</html>

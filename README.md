@@ -4,6 +4,7 @@ Crime rates per 1000 inhabitants across different areas of Leipzig.
 
 - [Leipzig Population Information](https://geoportal.leipzig.de/arcgis/apps/experiencebuilder/experience/?id=9face06dfa3d44f0ab298a62ed972419&page=page_0)
 - [Police Report on Crime in Leipzig](https://www.polizei.sachsen.de/de/103111.htm)
+- [Leipzig Geodata](https://www.leipzig.de/buergerservice-und-verwaltung/unsere-stadt/gebietsgliederung-und-strassennamen/kommunale-gebietsgliederung#c22832)
 
 ## Sorted Frequency
 
@@ -35,6 +36,6 @@ Below is the sorted list of areas in Leipzig, showing the frequency of crimes pe
 | Baalsdorf                 | 0.55            |
 | Althen-Kleinpösna         | 0.46            |
 
-## Todo:
-- Create a bubble chart and some kind of a map visualization.
-- Add more years to the analysis for trend comparison.
+## How to run the project:
+> python -m http.server  
+> http://localhost:8000/lpzg_crime_map.html

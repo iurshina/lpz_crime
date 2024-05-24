@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Map with Crime Rates</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map { height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const map = L.map('map').setView([51.3396955, 12.3730747], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        Promise.all([
+          fetch('data/Leipzig_ortsteile.geojson').then(resp => resp.json()),
+          fetch('data/crime_rates.json').then(resp => resp.json())
+        ]).then(([geoJsonData, crimeRates]) => {
+          L.geoJSON(geoJsonData, {
+            style: function (feature) {
+              const crimeRate = crimeRates[feature.properties.Name];
+              return { color: getColor(crimeRate) };
+            },
+            onEachFeature: function (feature, layer) {
+              const crimeRate = crimeRates[feature.properties.Name];
+              layer.bindPopup(`<strong>${feature.properties.Name}</strong><br/>Crime Rate: ${crimeRate} per 1000`);
+            }
+          }).addTo(map);
+        });
+
+        function getColor(crimeRate) {
+          if (crimeRate === undefined) return '#CCCCCC'; 
+          return crimeRate > 20 ? '#800026' :
+                 crimeRate > 5 ? '#E31A1C' :
+                 crimeRate > 3 ? '#E31A1C' :
+                 crimeRate > 2 ? '#cfc73e' :
+                 '#35bd60';
+        }
+      });
+    </script>
+</body>
+</html>
